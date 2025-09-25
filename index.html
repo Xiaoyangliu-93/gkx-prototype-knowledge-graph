@@ -5,75 +5,691 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI知识图谱平台</title>
     <style>
+        :root {
+            --primary-color: #1890ff;
+            --secondary-color: #52c41a;
+            --accent-color: #722ed1;
+            --warning-color: #fa8c16;
+            --error-color: #f5222d;
+            --background-color: #f0f2f5;
+            --card-background: #ffffff;
+            --text-primary: #262626;
+            --text-secondary: #8c8c8c;
+            --border-color: #d9d9d9;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-hover: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
         }
-        .header {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-input {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            width: 300px;
+        }
+
+        .search-btn {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 80px);
+        }
+
+        .main-nav {
+            width: 250px;
+            background: var(--card-background);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+
+        .nav-logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border-color);
             margin-bottom: 20px;
         }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+        .nav-logo h2 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
         }
-        h1 {
+
+        .nav-search {
+            padding: 0 20px 15px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+
+        .global-search {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+            background: white;
+            margin-bottom: 6px;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 6px 10px;
+            background: #f5f5f5;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 0 10px;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .nav-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .nav-item.active {
+            border-left-color: var(--primary-color);
+            background-color: #e6f7ff;
+            color: var(--primary-color);
+        }
+
+        .nav-user {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        .user-btn {
+            width: 100%;
+            padding: 10px 16px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .user-btn:hover {
+            background: #0050b3;
+        }
+
+        .container {
+            flex: 1;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+        }
+
+        .sidebar {
+            background: var(--card-background);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .sidebar-header {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .menu-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+
+        .menu-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .menu-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .content {
+            background: var(--card-background);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            min-height: 600px;
+        }
+
+        .content-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-body {
+            padding: 30px;
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            background: #fafafa;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0050b3;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: #e6e6e6;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #f6ffed;
+            border: 1px solid #b7eb8f;
+            color: #52c41a;
+        }
+
+        .alert-info {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
             color: #1890ff;
+        }
+
+        .alert-warning {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            color: #fa8c16;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-background);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
             margin-bottom: 10px;
         }
-        .success {
-            color: #52c41a;
-            font-weight: bold;
-            font-size: 18px;
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
         }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #1890ff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin: 10px;
-        }
-        .btn:hover {
-            background: #0050b3;
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .main-nav {
+                width: 100%;
+                position: static;
+            }
+            
+            .container {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+            
+            .sidebar {
+                position: static;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🧠 AI知识图谱平台</h1>
-        <p class="success">GitHub Pages 部署成功！</p>
-        <p>这是一个简化版本，用于测试GitHub Pages功能</p>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🧠 AI知识图谱平台</div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="智能搜索..." id="globalSearch">
+                <button class="search-btn" onclick="performSearch()">搜索</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <nav class="main-nav">
+            <div class="nav-logo">
+                <h2>AI知识工程平台</h2>
+            </div>
+            <div class="nav-search">
+                <input type="text" placeholder="搜索..." class="global-search">
+                <button class="search-btn">🔍 搜索</button>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item active" data-module="dashboard">首页</div>
+                <div class="nav-item" data-module="knowledge-modeling">知识建模</div>
+                <div class="nav-item" data-module="graph-construction">图谱构建</div>
+                <div class="nav-item" data-module="knowledge-fusion">知识融合</div>
+                <div class="nav-item" data-module="knowledge-computation">知识计算</div>
+                <div class="nav-item" data-module="graph-application">图谱应用</div>
+                <div class="nav-item" data-module="multimodal-knowledge-graph">多模态知识图谱</div>
+                <div class="nav-item" data-module="multimodal-knowledge-graph-qa">多模态问答能力建设</div>
+                <div class="nav-item" data-module="system-management">系统管理</div>
+            </div>
+            <div class="nav-user">
+                <button class="user-btn">👤 用户中心</button>
+            </div>
+        </nav>
+
+        <div class="container">
+            <aside class="sidebar">
+                <div class="sidebar-header">功能导航</div>
+                <div class="sidebar-menu" id="sidebarMenu">
+                    <!-- 动态生成菜单 -->
+                </div>
+            </aside>
+
+            <main class="content">
+                <div class="content-header">
+                    <div>
+                        <h2 id="pageTitle">首页</h2>
+                        <p id="pageDescription">全局任务与监控仪表盘</p>
+                    </div>
+                    <div id="headerButtons">
+                        <button class="btn btn-primary" onclick="showDemo()">演示</button>
+                        <button class="btn btn-secondary" onclick="showHelp()">帮助</button>
+                    </div>
+                </div>
+                <div class="content-body" id="contentBody">
+                    <!-- 动态生成内容 -->
+                </div>
+            </main>
+        </div>
     </div>
-    
-    <div class="container">
-        <h2>功能模块</h2>
-        <p>完整的AI知识图谱平台包含以下模块：</p>
-        <ul>
-            <li>知识建模</li>
-            <li>图谱构建</li>
-            <li>知识融合</li>
-            <li>知识计算</li>
-            <li>图谱应用</li>
-            <li>多模态知识图谱</li>
-            <li>多模态问答能力建设</li>
-            <li>系统管理</li>
-            <li>用户中心</li>
-        </ul>
-        
-        <h2>测试链接</h2>
-        <a href="test.html" class="btn">测试页面</a>
-        <a href="https://github.com/Xiaoyangliu-93/gkx-prototype-knowledge-graph" class="btn">GitHub仓库</a>
-    </div>
+
+    <script>
+        // 简化的模块配置
+        const modules = {
+            'dashboard': {
+                name: '首页',
+                description: '全局任务与监控仪表盘',
+                subPages: {
+                    'overview': {
+                        name: '总览',
+                        description: '平台核心指标和状态概览'
+                    },
+                    'task-monitoring': {
+                        name: '任务监控',
+                        description: '实时任务状态和进度监控'
+                    },
+                    'system-health': {
+                        name: '系统健康',
+                        description: '系统性能和健康状态监控'
+                    }
+                }
+            },
+            'knowledge-modeling': {
+                name: '知识建模',
+                description: '智能概念抽取与关系生成',
+                subPages: {
+                    'seed-terms-management': {
+                        name: '种子术语管理',
+                        description: '科技领域种子术语的生成和管理'
+                    },
+                    'candidate-terms-generation': {
+                        name: '候选术语生成',
+                        description: '基于种子术语生成候选术语'
+                    },
+                    'dependency-graph-construction': {
+                        name: '依存图构建',
+                        description: '构建术语间的依存关系图'
+                    }
+                }
+            }
+        };
+
+        let currentModule = 'dashboard';
+        let currentSubPage = null;
+        let currentThirdPage = null;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initNavigation();
+            loadModule('dashboard');
+        });
+
+        // 初始化导航
+        function initNavigation() {
+            // 主导航点击事件
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const moduleId = this.getAttribute('data-module');
+                    if (moduleId) {
+                        loadModule(moduleId);
+                    }
+                });
+            });
+
+            // 用户中心点击事件
+            document.querySelector('.user-btn').addEventListener('click', function() {
+                loadModule('user-center');
+            });
+        }
+
+        // 加载模块
+        function loadModule(moduleId) {
+            const module = modules[moduleId];
+            if (!module) return;
+
+            currentModule = moduleId;
+            currentSubPage = null;
+            currentThirdPage = null;
+
+            // 更新导航状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-module="${moduleId}"]`).classList.add('active');
+
+            document.getElementById('pageTitle').textContent = module.name;
+            document.getElementById('pageDescription').textContent = module.description;
+
+            // 控制演示和帮助按钮的显示
+            const headerButtons = document.getElementById('headerButtons');
+            if (moduleId === 'dashboard') {
+                headerButtons.style.display = 'block';
+            } else {
+                headerButtons.style.display = 'none';
+            }
+
+            generateSidebarMenu(module.subPages);
+            generateModuleContent(moduleId, module);
+        }
+
+        // 生成侧边栏菜单
+        function generateSidebarMenu(subPages) {
+            const menu = document.getElementById('sidebarMenu');
+            menu.innerHTML = '';
+
+            Object.keys(subPages).forEach(subPageId => {
+                const subPage = subPages[subPageId];
+                
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu-item';
+                menuItem.textContent = subPage.name;
+                menuItem.onclick = () => loadSubPage(subPageId, subPage);
+                menu.appendChild(menuItem);
+            });
+        }
+
+        // 加载二级页面
+        function loadSubPage(subPageId, subPage) {
+            currentSubPage = subPageId;
+            currentThirdPage = null;
+
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            document.getElementById('pageTitle').textContent = subPage.name;
+            document.getElementById('pageDescription').textContent = subPage.description;
+
+            // 隐藏演示和帮助按钮
+            const headerButtons = document.getElementById('headerButtons');
+            headerButtons.style.display = 'none';
+
+            generateSubPageContent(subPageId, subPage);
+        }
+
+        // 生成模块内容
+        function generateModuleContent(moduleId, module) {
+            const content = document.getElementById('contentBody');
+            
+            let statsHtml = '';
+            if (moduleId === 'dashboard') {
+                statsHtml = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">1.2M</div>
+                            <div class="stat-label">实体数量</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">5.8M</div>
+                            <div class="stat-label">关系数量</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">98.5%</div>
+                            <div class="stat-label">数据质量</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">系统可用性</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            content.innerHTML = statsHtml + `
+                <div class="card">
+                    <div class="card-header">${module.name} - 功能概览</div>
+                    <div class="card-body">
+                        <p>欢迎使用${module.name}模块。本模块提供以下主要功能：</p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                            ${Object.keys(module.subPages).map(subPageId => {
+                                const subPage = module.subPages[subPageId];
+                                return `
+                                    <div class="card" style="margin: 0; cursor: pointer;" onclick="loadSubPage('${subPageId}', ${JSON.stringify(subPage).replace(/"/g, '&quot;')})">
+                                        <div class="card-body">
+                                            <h4>${subPage.name}</h4>
+                                            <p>${subPage.description}</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成二级页面内容
+        function generateSubPageContent(subPageId, subPage) {
+            const content = document.getElementById('contentBody');
+            
+            content.innerHTML = `
+                <div class="alert alert-success">
+                    <strong>功能说明：</strong>${subPage.name}模块为您提供专业的${subPage.description.toLowerCase()}功能。
+                </div>
+
+                <div class="card">
+                    <div class="card-header">${subPage.name} - 操作面板</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">选择数据源</label>
+                            <select class="form-input">
+                                <option>请选择数据源</option>
+                                <option>文本文档</option>
+                                <option>数据库</option>
+                                <option>API接口</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">配置参数</label>
+                            <textarea class="form-input" rows="4" placeholder="请输入配置参数..." id="configParams"></textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="startProcessing('${subPageId}')">开始处理</button>
+                        <button class="btn btn-secondary" onclick="resetForm()">重置</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">处理结果</div>
+                    <div class="card-body">
+                        <div class="graph-container">
+                            <div class="graph-canvas" id="resultCanvas">
+                                <div style="text-align: center; color: var(--text-secondary);">
+                                    <div style="font-size: 48px; margin-bottom: 20px;">📈</div>
+                                    <div>${subPage.name}结果可视化区域</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 工具函数
+        function showDemo() {
+            alert('演示功能即将推出...');
+        }
+
+        function showHelp() {
+            alert('帮助文档正在完善中...');
+        }
+
+        function performSearch() {
+            const searchTerm = document.getElementById('globalSearch').value;
+            if (searchTerm.trim()) {
+                alert('搜索功能：' + searchTerm);
+            } else {
+                alert('请输入搜索关键词');
+            }
+        }
+
+        function startProcessing(subPageId) {
+            alert('开始处理：' + subPageId);
+        }
+
+        function resetForm() {
+            alert('表单已重置');
+        }
+    </script>
 </body>
 </html>
