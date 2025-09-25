@@ -18,25 +18,6 @@ python v2.py
 - **基础原型**: `kg_prototype_v2.html`
 - **React组件**: `kg_prototype_v2.jsx`
 
-### 3. 运行测试
-```bash
-python test_prototype.py
-```
-
-## 📁 文件结构
-
-```
-proto-claude/
-├── v2.py                           # 主程序 - 原型生成器
-├── kg_enhanced_prototype.html      # 增强交互式原型 (推荐)
-├── kg_interactive_prototype.html   # 完整交互式原型
-├── kg_prototype_v2.html           # 基础HTML原型
-├── kg_prototype_v2.jsx            # React组件原型
-├── kg_prototype_v2.css            # CSS样式文件
-├── test_prototype.py              # 测试脚本
-└── README.md                      # 说明文档
-```
-
 ## ✨ 功能特性
 
 ### 🎯 核心功能模块
